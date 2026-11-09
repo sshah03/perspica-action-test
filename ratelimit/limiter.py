@@ -19,3 +19,10 @@ class FixedWindowLimiter:
             return False
         self.counts[key] = (start, count + 1)
         return True
+
+    def remaining(self, key):
+        """How many more requests `key` can make in the current window."""
+        start, count = self.counts.get(key, (time.time(), 0))
+        if time.time() - start >= self.window:
+            return self.limit
+        return max(self.limit - count, 0)
