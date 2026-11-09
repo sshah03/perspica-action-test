@@ -1,0 +1,37 @@
+# perspica: a summary check on every pull request, and the reviewer quiz when an author asks for one.
+# Written by `perspica github init`.
+name: perspica
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  issue_comment:
+    types: [created, edited]
+  # Reviewers can answer the quiz as they approve. On a PR from a fork this event can't write, so those
+  # answers are graded on the next event instead.
+  pull_request_review:
+    types: [submitted]
+permissions:
+  contents: read
+  # Replies to quiz answers. Commenting on a pull request needs this, not just issues: write.
+  pull-requests: write
+  issues: write
+  checks: write
+  # The perspica status, which a branch rule can require.
+  statuses: write
+concurrency:
+  group: perspica-${{ github.event.pull_request.number || github.event.issue.number }}
+jobs:
+  update:
+    # Comments only matter on pull requests: perspica's own, and quiz answers.
+    if: >-
+      github.event_name == 'pull_request_target' || github.event_name == 'pull_request_review' ||
+      (github.event.issue.pull_request && (contains(github.event.comment.body, 'perspica:data') || contains(github.event.comment.body, '/quiz')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # Installs perspica 0.5.0 and updates the check. It reads the pull request's code but never runs it.
+      - uses: sshah03/perspica@6f0f4d6aabf9ac93663601a0fe7cfe24ef3556b9
+        with:
+          # "true": the check waits until the pull request's author has answered every question in
+          # perspica's quiz right. They can retake it. Make the check required to block merging until then.
+          require-author-quiz: "false"
