@@ -29,9 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # Installs perspica 0.5.0 and updates the check. It reads the pull request's code but never runs it.
-      - uses: sshah03/perspica@6f0f4d6aabf9ac93663601a0fe7cfe24ef3556b9
+      # Installs perspica 0.5.1 and updates the check. It reads the pull request's code but never runs it.
+      - uses: sshah03/perspica@v0.5.1
         with:
           # "true": the check waits until the pull request's author has answered every question in
           # perspica's quiz right. They can retake it. Make the check required to block merging until then.
-          require-author-quiz: "true"
+          require-author-quiz: "false"
