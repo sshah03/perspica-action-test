@@ -34,4 +34,4 @@ jobs:
         with:
           # "true": the check waits until the pull request's author has answered every question in
           # perspica's quiz right. They can retake it. Make the check required to block merging until then.
-          require-author-quiz: "false"
+          require-author-quiz: "true"
